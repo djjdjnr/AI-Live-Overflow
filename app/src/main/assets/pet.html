@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: transparent; }
+
+#pet-container {
+    width: 180px;
+    height: 240px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+svg { width: 160px; height: 200px; overflow: visible; }
+
+.cat-body { transition: all 0.3s ease; }
+.cat-eye { transition: all 0.15s ease; }
+.cat-tail { transform-origin: bottom; animation: tailWag 3s ease-in-out infinite; }
+.cat-whisker { transition: all 0.3s ease; }
+
+/* Normal state */
+@keyframes tailWag {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+@keyframes blink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+}
+
+@keyframes sleep {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-20px) scale(1.1); }
+    50% { transform: translateY(0) scale(1); }
+    70% { transform: translateY(-8px) scale(1.05); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+}
+
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); opacity: 0; }
+    15% { transform: scale(1.3); opacity: 0.8; }
+    30% { transform: scale(1); opacity: 0; }
+    45% { transform: scale(1.2); opacity: 0.6; }
+    60% { transform: scale(0.9); opacity: 0; }
+    75% { transform: scale(1.1); opacity: 0.4; }
+    90% { transform: scale(0.95); opacity: 0; }
+}
+
+/* Sleep Z animation */
+.z-sleep {
+    animation: floatUp 2s ease-out infinite;
+    opacity: 0;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    20% { opacity: 0.6; }
+    100% { transform: translateY(-30px) translateX(15px); opacity: 0; }
+}
+
+.delay-1 { animation-delay: 0.5s; }
+.delay-2 { animation-delay: 1.5s; }
+
+.hidden { display: none; }
+
+/* Bubbles */
+.bubble {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 2px solid #ffb6c1;
+    border-radius: 12px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: #555;
+    white-space: nowrap;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+.bubble.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div id="pet-container">
+    <div id="bubble" class="bubble"></div>
+    <svg viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Tail -->
+        <path class="cat-tail" d="M130 130 Q155 100 145 70 Q140 55 135 60" stroke="#FF9E7A" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+        <!-- Back legs -->
+        <ellipse cx="50" cy="175" rx="18" ry="12" fill="#FFB08C"/>
+        <ellipse cx="100" cy="175" rx="18" ry="12" fill="#FFB08C"/>
+
+        <!-- Body -->
+        <ellipse id="catBody" cx="80" cy="145" rx="50" ry="40" fill="#FFB08C"/>
+
+        <!-- Belly patch -->
+        <ellipse cx="80" cy="155" rx="28" ry="22" fill="#FFD5C0"/>
+
+        <!-- Front paws -->
+        <ellipse cx="55" cy="175" rx="10" ry="7" fill="#FFD5C0"/>
+        <ellipse cx="105" cy="175" rx="10" ry="7" fill="#FFD5C0"/>
+
+        <!-- Paw lines -->
+        <line x1="52" y1="178" x2="52" y2="182" stroke="#E89470" stroke-width="1"/>
+        <line x1="55" y1="178" x2="55" y2="182" stroke="#E89470" stroke-width="1"/>
+        <line x1="58" y1="178" x2="58" y2="182" stroke="#E89470" stroke-width="1"/>
+        <line x1="102" y1="178" x2="102" y2="182" stroke="#E89470" stroke-width="1"/>
+        <line x1="105" y1="178" x2="105" y2="182" stroke="#E89470" stroke-width="1"/>
+        <line x1="108" y1="178" x2="108" y2="182" stroke="#E89470" stroke-width="1"/>
+
+        <!-- Head -->
+        <ellipse cx="80" cy="90" rx="45" ry="40" fill="#FFB08C"/>
+
+        <!-- Ears -->
+        <polygon points="45,65 35,30 60,55" fill="#FFB08C" stroke="#F5A07A" stroke-width="1"/>
+        <polygon points="115,65 125,30 100,55" fill="#FFB08C" stroke="#F5A07A" stroke-width="1"/>
+        <!-- Inner ears -->
+        <polygon points="47,62 39,37 58,56" fill="#FFB0B0"/>
+        <polygon points="113,62 121,37 102,56" fill="#FFB0B0"/>
+
+        <!-- Face patch -->
+        <ellipse cx="80" cy="98" rx="25" ry="18" fill="#FFD5C0"/>
+
+        <!-- Eyes -->
+        <g class="cat-eye" id="leftEye">
+            <ellipse cx="63" cy="85" rx="8" ry="9" fill="white"/>
+            <ellipse cx="65" cy="85" rx="5" ry="6" fill="#4A6741"/>
+            <ellipse cx="66" cy="83" rx="2.5" ry="2.5" fill="white"/>
+        </g>
+        <g class="cat-eye" id="rightEye">
+            <ellipse cx="97" cy="85" rx="8" ry="9" fill="white"/>
+            <ellipse cx="99" cy="85" rx="5" ry="6" fill="#4A6741"/>
+            <ellipse cx="100" cy="83" rx="2.5" ry="2.5" fill="white"/>
+        </g>
+
+        <!-- Nose -->
+        <ellipse cx="80" cy="93" rx="3" ry="2.5" fill="#FF8A8A"/>
+
+        <!-- Mouth -->
+        <path d="M77 95 Q80 99 83 95" stroke="#888" stroke-width="1.2" fill="none"/>
+
+        <!-- Whiskers left -->
+        <line class="cat-whisker" x1="68" y1="92" x2="38" y2="87" stroke="#CCC" stroke-width="1"/>
+        <line class="cat-whisker" x1="68" y1="95" x2="36" y2="97" stroke="#CCC" stroke-width="1"/>
+        <line class="cat-whisker" x1="68" y1="98" x2="38" y2="107" stroke="#CCC" stroke-width="1"/>
+
+        <!-- Whiskers right -->
+        <line class="cat-whisker" x1="92" y1="92" x2="122" y2="87" stroke="#CCC" stroke-width="1"/>
+        <line class="cat-whisker" x1="92" y1="95" x2="124" y2="97" stroke="#CCC" stroke-width="1"/>
+        <line class="cat-whisker" x1="92" y1="98" x2="122" y2="107" stroke="#CCC" stroke-width="1"/>
+
+        <!-- Blush (cheek blush) -->
+        <ellipse cx="52" cy="97" rx="7" ry="4" fill="#FFB5C5" opacity="0"/>
+        <ellipse cx="108" cy="97" rx="7" ry="4" fill="#FFB5C5" opacity="0"/>
+
+        <!-- Sleep Zs -->
+        <text class="z-sleep" x="125" y="60" font-size="16" fill="#999" font-weight="bold">z</text>
+        <text class="z-sleep delay-1" x="135" y="45" font-size="20" fill="#bbb" font-weight="bold">z</text>
+        <text class="z-sleep delay-2" x="140" y="28" font-size="24" fill="#ddd" font-weight="bold">z</text>
+
+        <!-- Heart (love reaction) -->
+        <text id="heartEmoji" x="80" y="55" font-size="0" text-anchor="middle" fill="#FF4081">❤️</text>
+
+        <!-- Exclamation (surprise) -->
+        <text id="surpriseMark" x="80" y="45" font-size="0" text-anchor="middle" fill="#FF6B35" font-weight="bold">!</text>
+
+    </svg>
+</div>
+
+<script>
+const engine = {
+    state: 'idle',
+    idleTimer: null,
+    sleepTimer: null,
+    tapCount: 0,
+    lastTapTime: 0,
+    noInteractionTime: 0,
+
+    init() {
+        this.startBlinking();
+        this.startIdleTimer();
+        this.updateNoInteraction();
+    },
+
+    startBlinking() {
+        setInterval(() => {
+            if (this.state === 'idle' || this.state === 'happy') {
+                const leftEye = document.getElementById('leftEye');
+                const rightEye = document.getElementById('rightEye');
+                if (leftEye && rightEye) {
+                    leftEye.style.animation = 'blink 0.3s ease';
+                    rightEye.style.animation = 'blink 0.3s ease';
+                    setTimeout(() => {
+                        leftEye.style.animation = '';
+                        rightEye.style.animation = '';
+                    }, 300);
+                }
+            }
+        }, 3000);
+    },
+
+    startIdleTimer() {
+        this.idleTimer = setInterval(() => {
+            this.noInteractionTime += 5;
+            if (this.noInteractionTime >= 300) {
+                this.goToSleep();
+            } else if (this.noInteractionTime >= 120 && this.state !== 'sleep') {
+                this.showBubble('\u55EF\u2026\u2026\u597D\u65E0\u804A');
+                if (this.state === 'idle') this.doIdleAnim();
+            }
+        }, 5000);
+    },
+
+    updateNoInteraction() {
+        const resetNoInteraction = () => {
+            this.noInteractionTime = 0;
+            if (this.state === 'sleep') {
+                this.wakeUp();
+            }
+        };
+        document.addEventListener('touchstart', resetNoInteraction);
+        document.addEventListener('click', resetNoInteraction);
+        document.addEventListener('mousedown', resetNoInteraction);
+    },
+
+    // === Reactions ===
+
+    onTap() {
+        this.noInteractionTime = 0;
+        this.tapCount++;
+        const now = Date.now();
+
+        if (now - this.lastTapTime < 300) {
+            this.onDoubleTap();
+            return;
+        }
+        this.lastTapTime = now;
+
+        if (this.state === 'sleep') { this.wakeUp(); return; }
+
+        if (this.tapCount >= 8) {
+            this.showBubble('\u5617\u5617\u5617\u522B\u6233\u4E86\uFF01');
+        } else if (this.tapCount >= 5) {
+            this.showBubble('\u554A\uFF01\u597D\u4E71\uFF01');
+        } else if (this.tapCount >= 3) {
+            this.showBubble('\u55B5\uFF1F');
+        }
+
+        this.state = 'happy';
+        const container = document.querySelector('svg');
+        container.style.animation = 'bounce 0.6s ease';
+        setTimeout(() => { container.style.animation = ''; }, 600);
+
+        const body = document.getElementById('catBody');
+        if (body) body.style.fill = '#FFB8A0';
+        setTimeout(() => { if (body) body.style.fill = '#FFB08C'; }, 500);
+
+        setTimeout(() => {
+            if (this.tapCount < 3) this.state = 'idle';
+        }, 1500);
+
+        setTimeout(() => { this.tapCount = 0; }, 3000);
+    },
+
+    onDoubleTap() {
+        this.noInteractionTime = 0;
+        this.tapCount = 0;
+        if (this.state === 'sleep') { this.wakeUp(); return; }
+
+        this.state = 'love';
+        const container = document.querySelector('svg');
+        container.style.animation = 'bounce 0.8s ease';
+        setTimeout(() => { container.style.animation = ''; }, 800);
+
+        const heart = document.getElementById('heartEmoji');
+        if (heart) {
+            heart.style.fontSize = '28px';
+            heart.style.animation = 'heartBeat 1.5s ease';
+        }
+
+        const blushLeft = document.querySelector('ellipse[opacity="0"]');
+        const blushes = document.querySelectorAll('ellipse[opacity="0"]');
+        blushes.forEach(b => b.setAttribute('opacity', '0.5'));
+
+        this.showBubble('\u559C\u6B22\u4F60\uFF01');
+
+        setTimeout(() => {
+            if (heart) {
+                heart.style.fontSize = '0';
+                heart.style.animation = '';
+            }
+            blushes.forEach(b => b.setAttribute('opacity', '0'));
+            this.state = 'idle';
+        }, 2000);
+    },
+
+    onLongPress() {
+        this.noInteractionTime = 0;
+        this.tapCount = 0;
+        if (this.state === 'sleep') { this.wakeUp(); return; }
+
+        this.state = 'surprised';
+        const container = document.querySelector('svg');
+        container.style.animation = 'shake 0.5s ease';
+        setTimeout(() => { container.style.animation = ''; }, 500);
+
+        const surprise = document.getElementById('surpriseMark');
+        if (surprise) surprise.style.fontSize = '30px';
+
+        // Wide eyes
+        const leftPupil = document.querySelector('#leftEye ellipse:nth-child(2)');
+        const rightPupil = document.querySelector('#rightEye ellipse:nth-child(2)');
+        if (leftPupil) leftPupil.setAttribute('rx', '3');
+        if (rightPupil) rightPupil.setAttribute('rx', '3');
+
+        this.showBubble('\u55B7\uFF01\u5413\u6211\u4E00\u8DF3');
+
+        setTimeout(() => {
+            if (surprise) surprise.style.fontSize = '0';
+            if (leftPupil) leftPupil.setAttribute('rx', '5');
+            if (rightPupil) rightPupil.setAttribute('rx', '5');
+            this.state = 'idle';
+        }, 1000);
+    },
+
+    onFling(dx, dy) {
+        this.noInteractionTime = 0;
+        this.state = 'flung';
+        this.showBubble('\u554A\uFF01\u8981\u98DE\u51FA\u53BB\u4E86\uFF01');
+        setTimeout(() => { this.state = 'idle'; }, 2000);
+    },
+
+    onDragEnd() {
+        this.noInteractionTime = 0;
+        if (this.state === 'sleep') { this.wakeUp(); }
+        this.state = 'idle';
+    },
+
+    // === Sleep / Wake ===
+
+    goToSleep() {
+        this.state = 'sleep';
+        this.showBubble('\u665A\u5B89\u2026\u2026');
+        const container = document.querySelector('svg');
+        container.style.animation = 'sleep 2s ease-in-out infinite';
+
+        const eyes = document.querySelectorAll('.cat-eye');
+        eyes.forEach(e => {
+            const pupils = e.querySelectorAll('ellipse');
+            pupils.forEach(p => p.style.fill = '#FFB08C');
+        });
+
+        const zTexts = document.querySelectorAll('.z-sleep');
+        zTexts.forEach(z => z.classList.remove('hidden'));
+    },
+
+    wakeUp() {
+        this.state = 'idle';
+        this.noInteractionTime = 0;
+        this.showBubble('\u55B5\uFF1F\u9192\u4E86\u5566');
+        const container = document.querySelector('svg');
+        container.style.animation = 'bounce 0.4s ease';
+        setTimeout(() => { container.style.animation = ''; }, 400);
+
+        const eyes = document.querySelectorAll('.cat-eye');
+        eyes.forEach(e => {
+            const pupils = e.querySelectorAll('ellipse');
+            pupils.forEach(p => p.style.fill = '');
+        });
+
+        const zTexts = document.querySelectorAll('.z-sleep');
+        zTexts.forEach(z => z.classList.add('hidden'));
+
+        setTimeout(() => { this.hideBubble(); }, 2000);
+    },
+
+    // === AI Push ===
+
+    setStateFromAI(state, text) {
+        if (state === 'sleep') { this.goToSleep(); return; }
+        if (state === 'wake') { this.wakeUp(); return; }
+        if (state === 'love') { this.onDoubleTap(); return; }
+        if (state === 'surprised') { this.onLongPress(); return; }
+        if (text) this.showBubble(text);
+    },
+
+    // === Bubble ===
+
+    showBubble(text) {
+        const bubble = document.getElementById('bubble');
+        if (bubble) {
+            bubble.textContent = text;
+            bubble.classList.add('show');
+            if (this._bubbleTimeout) clearTimeout(this._bubbleTimeout);
+            this._bubbleTimeout = setTimeout(() => {
+                bubble.classList.remove('show');
+            }, 2500);
+        }
+    },
+
+    hideBubble() {
+        const bubble = document.getElementById('bubble');
+        if (bubble) bubble.classList.remove('show');
+    },
+
+    doIdleAnim() {
+        const catBody = document.querySelector('svg');
+        if (catBody) {
+            catBody.style.animation = 'bounce 0.4s ease';
+            setTimeout(() => { catBody.style.animation = ''; }, 400);
+        }
+    },
+
+    // === Notifications ===
+
+    showNotification(text) {
+        this.showBubble(text);
+    }
+};
+
+window.petEngine = engine;
+engine.init();
+</script>
+</body>
+</html>
