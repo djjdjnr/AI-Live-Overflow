@@ -17,11 +17,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Generate Gradle Wrapper
+      - name: Install Gradle and Generate Wrapper
         run: |
           if [ ! -f gradlew ]; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq gradle
             gradle wrapper --gradle-version=8.5
           fi
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Decode Keystore (if available)
         env:
