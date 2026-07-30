@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.CatPet" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">#FFB08C</item>
+        <item name="colorPrimaryVariant">#FF8A65</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#FFB5C5</item>
+        <item name="colorSecondaryVariant">#FF80AB</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="android:statusBarColor">#FFB08C</item>
+    </style>
+</resources>
